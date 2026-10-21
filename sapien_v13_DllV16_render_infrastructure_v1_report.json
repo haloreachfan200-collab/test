@@ -1,0 +1,124 @@
+{
+  "status": "PARTIAL_PORT_CREATED",
+  "scope_note": "This is an experimentally testable first-stage port, not the complete DLL V16 patch. Only verified CPU render-packet, cached-render-state, and associated auxiliary-heap changes are applied.",
+  "input": {
+    "path": "/mnt/data/sapien_v13_obj20480_threads2024_havok4x_contactpoints4096_listheaders256(1).exe",
+    "size": 40796912,
+    "sha256": "051b5268d926f0b8cf28f55f83c34d8761eed6960631f676521971b58b7d7d08"
+  },
+  "output": {
+    "path": "/mnt/data/sapien_v13_DllV16_render_infrastructure_v1_partial.exe",
+    "size": 40796912,
+    "sha256": "6ddeea5d3cf73af667cdfc5449116cd642f9b5e72054d0c807c157529d7a46fb",
+    "pe_checksum": "0x026F42B5"
+  },
+  "new_section": {
+    "name": ".v16pkt",
+    "rva": "0x66A2000",
+    "va": "0x1466A2000",
+    "virtual_size": "0x100000",
+    "raw_size": 0,
+    "purpose": "1 MiB CPU render-packet backing store"
+  },
+  "applied_edits": [
+    {
+      "file_offset": "0xB782FA",
+      "before": "00 04 00 00",
+      "after": "00 10 00 00",
+      "change": "Cached object render states: 1,024 -> 4,096 records"
+    },
+    {
+      "file_offset": "0xB4AA75",
+      "before": "00 00 06 00",
+      "after": "00 00 18 00",
+      "change": "Render-state auxiliary heap allocation: 0x60000 -> 0x180000"
+    },
+    {
+      "file_offset": "0xB4AAA7",
+      "before": "00 00 06 00",
+      "after": "00 00 18 00",
+      "change": "Render-state auxiliary heap registration: 0x60000 -> 0x180000"
+    },
+    {
+      "file_offset": "0xB02C31",
+      "before": "00 5C 03 00",
+      "after": "00 00 10 00",
+      "change": "CPU packet total capacity in allocator: 0x35C00 -> 0x100000"
+    },
+    {
+      "file_offset": "0xB02D5E",
+      "before": "00 5C 03 00",
+      "after": "00 00 10 00",
+      "change": "CPU packet total capacity in remaining-size helper: 0x35C00 -> 0x100000"
+    },
+    {
+      "file_offset": "0xB02E34",
+      "before": "00 5C 03 00",
+      "after": "00 00 10 00",
+      "change": "CPU packet reset/clear size: 0x35C00 -> 0x100000"
+    },
+    {
+      "file_offset": "0xB02E7A",
+      "before": "00 5C 03 00",
+      "after": "00 00 10 00",
+      "change": "CPU packet reported capacity: 0x35C00 -> 0x100000"
+    },
+    {
+      "file_offset": "0xB02C5A",
+      "before": "00 00 04 00",
+      "after": "00 00 10 00",
+      "change": "CPU packet maximum offset check: 0x40000 -> 0x100000"
+    },
+    {
+      "file_offset": "0xB02C74",
+      "before": "12",
+      "after": "14",
+      "change": "CPU packet handle encoder generation shift: 18 -> 20"
+    },
+    {
+      "file_offset": "0xB02DBE",
+      "before": "FF 3F 00 00",
+      "after": "FF 0F 00 00",
+      "change": "CPU packet decoder generation mask: 0x3FFF -> 0x0FFF"
+    },
+    {
+      "file_offset": "0xB02DC6",
+      "before": "12",
+      "after": "14",
+      "change": "CPU packet decoder generation shift: 18 -> 20"
+    },
+    {
+      "file_offset": "0xB02DC9",
+      "before": "FF FF 03 00",
+      "after": "FF FF 0F 00",
+      "change": "CPU packet decoder offset mask: 0x3FFFF -> 0xFFFFF"
+    },
+    {
+      "file_offset": "0xB02DF6",
+      "before": "46 C2 A2 04",
+      "after": "06 E6 B9 05",
+      "change": "Redirect CPU packet backing reference to RVA 0x66A2000"
+    },
+    {
+      "file_offset": "0xB02E2E",
+      "before": "0E C2 A2 04",
+      "after": "CE E5 B9 05",
+      "change": "Redirect CPU packet backing reference to RVA 0x66A2000"
+    }
+  ],
+  "preserved": [
+    "The 20,480-byte CPU packet priority reserve (0x5000) remains unchanged.",
+    "Sapien's existing 20,480-object capacity is not reduced to the DLL's smaller value.",
+    "VA 0x141092461 and the next 32 bytes were verified unchanged."
+  ],
+  "not_yet_ported": [
+    "Visible render-list and mesh-record backing relocation (1,024 -> 4,096), all accessors and exhaustion guard.",
+    "Primary visibility scratch frames and object-indexed visited bitmaps (including unwind/cookie/page-probe metadata).",
+    "Render-message queue relocation/capacity and all producers, consumers, merge/reset and deletion invalidation paths.",
+    "Input object-update queue and companion array relocation.",
+    "Shared scheduler, dependency arrays, per-call object-job scratch and unwind metadata.",
+    "Physics collector backing, Havok working arenas, solver arenas, collision-element capacity and reclamation changes.",
+    "Game-state/checkpoint buffers and state-bank reservations.",
+    "Deletion-event recording wrappers and other DLL-specific appended helper code."
+  ]
+}
